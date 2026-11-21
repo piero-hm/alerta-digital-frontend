@@ -1,0 +1,234 @@
+<section class="card mb-4">
+  <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <h2 class="h5 mb-0">{{ tituloPregunta() }}</h2>
+    @if (preguntaEditando()) {
+      <button type="button" class="btn btn-sm btn-outline-secondary" (click)="nuevaPregunta()">
+        Cancelar edición
+      </button>
+    }
+  </div>
+  <div class="card-body">
+    <form [formRoot]="formPregunta">
+      @if (formPregunta().errors().length > 0) {
+        <div class="alert alert-danger" role="alert">
+          {{ formPregunta().errors()[0].message }}
+        </div>
+      }
+
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label" for="preguntaEnunciado">Enunciado</label>
+          <textarea
+            id="preguntaEnunciado"
+            class="form-control"
+            rows="2"
+            [formField]="formPregunta.enunciado"
+            [class.is-invalid]="formPregunta.enunciado().touched() && formPregunta.enunciado().invalid()"
+          ></textarea>
+          @if (formPregunta.enunciado().touched() && formPregunta.enunciado().invalid()) {
+            <div class="invalid-feedback d-block" role="alert">
+              {{ formPregunta.enunciado().errors()[0].message }}
+            </div>
+          }
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="preguntaMensaje">Mensaje simulado (opcional)</label>
+          <textarea
+            id="preguntaMensaje"
+            class="form-control"
+            rows="3"
+            placeholder="Ejemplo: Tu paquete fue retenido, paga aquí..."
+            [formField]="formPregunta.mensaje_simulado"
+            [class.is-invalid]="formPregunta.mensaje_simulado().touched() && formPregunta.mensaje_simulado().invalid()"
+          ></textarea>
+          @if (formPregunta.mensaje_simulado().touched() && formPregunta.mensaje_simulado().invalid()) {
+            <div class="invalid-feedback d-block" role="alert">
+              {{ formPregunta.mensaje_simulado().errors()[0].message }}
+            </div>
+          }
+        </div>
+
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="preguntaExplicacion">Explicación</label>
+          <textarea
+            id="preguntaExplicacion"
+            class="form-control"
+            rows="3"
+            [formField]="formPregunta.explicacion"
+            [class.is-invalid]="formPregunta.explicacion().touched() && formPregunta.explicacion().invalid()"
+          ></textarea>
+          @if (formPregunta.explicacion().touched() && formPregunta.explicacion().invalid()) {
+            <div class="invalid-feedback d-block" role="alert">
+              {{ formPregunta.explicacion().errors()[0].message }}
+            </div>
+          }
+        </div>
+
+        <div class="col-12">
+          <div class="form-check">
+            <input
+              id="preguntaActiva"
+              type="checkbox"
+              class="form-check-input"
+              [formField]="formPregunta.activa"
+            />
+            <label class="form-check-label" for="preguntaActiva">
+              Pregunta activa (los usuarios pueden responderla)
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <button type="submit" class="btn btn-primary" [disabled]="formPregunta().submitting()">
+          @if (formPregunta().submitting()) {
+            Guardando...
+          } @else if (preguntaEditando()) {
+            Guardar cambios
+          } @else {
+            Agregar pregunta
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-header">
+    <h2 class="h5 mb-0">Preguntas del tema ({{ preguntas().length }})</h2>
+  </div>
+  <div class="card-body">
+    @if (preguntas().length === 0) {
+      <p class="text-secondary mb-0">Este tema todavía no tiene preguntas.</p>
+    } @else {
+      <div class="d-flex flex-column gap-3">
+        @for (pregunta of preguntas(); track pregunta.id) {
+          <article class="border rounded p-3">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+              <div class="d-flex flex-wrap gap-2 align-items-center">
+                <span class="badge bg-primary">Pregunta #{{ pregunta.id }}</span>
+                @if (pregunta.activa) {
+                  <span class="badge bg-success">Activa</span>
+                } @else {
+                  <span class="badge bg-secondary">Inactiva</span>
+                }
+                @if (!tieneCorrecta(pregunta)) {
+                  <span class="badge badge-estado-pendiente">Sin opción correcta</span>
+                }
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="editarPregunta(pregunta)">
+                Editar pregunta
+              </button>
+            </div>
+
+            <p class="fw-semibold mb-2">{{ pregunta.enunciado }}</p>
+
+            @if (pregunta.mensaje_simulado) {
+              <p class="small text-secondary mb-2">
+                <span class="fw-semibold">Mensaje simulado:</span>
+                {{ pregunta.mensaje_simulado }}
+              </p>
+            }
+
+            <p class="small text-secondary mb-2">
+              <span class="fw-semibold">Explicación:</span>
+              {{ pregunta.explicacion }}
+            </p>
+
+            <h3 class="h6 mt-3">Opciones ({{ pregunta.opciones.length }})</h3>
+
+            @if (pregunta.opciones.length === 0) {
+              <p class="text-secondary small mb-2">Todavía no tiene opciones.</p>
+            } @else {
+              <ul class="list-group mb-2">
+                @for (opcion of pregunta.opciones; track opcion.id) {
+                  <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <span>
+                      {{ opcion.texto }}
+                      @if (opcion.es_correcta) {
+                        <span class="badge bg-success ms-2">Correcta</span>
+                      }
+                    </span>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="abrirEditarOpcion(pregunta, opcion)">
+                      Editar
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="abrirCrearOpcion(pregunta)">
+              Agregar opción
+            </button>
+
+            @if (opcionPregunta()?.id === pregunta.id) {
+              <div class="card mt-3 bg-light">
+                <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                  <span class="fw-semibold">{{ tituloOpcion() }}</span>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" (click)="cerrarOpcion()">
+                    Cancelar
+                  </button>
+                </div>
+                <div class="card-body">
+                  <form [formRoot]="formOpcion">
+                    @if (formOpcion().errors().length > 0) {
+                      <div class="alert alert-danger" role="alert">
+                        {{ formOpcion().errors()[0].message }}
+                      </div>
+                    }
+
+                    <div class="mb-3">
+                      <label class="form-label" for="opcionTexto">Texto de la opción</label>
+                      <input
+                        id="opcionTexto"
+                        type="text"
+                        class="form-control"
+                        [formField]="formOpcion.texto"
+                        [class.is-invalid]="formOpcion.texto().touched() && formOpcion.texto().invalid()"
+                      />
+                      @if (formOpcion.texto().touched() && formOpcion.texto().invalid()) {
+                        <div class="invalid-feedback d-block" role="alert">
+                          {{ formOpcion.texto().errors()[0].message }}
+                        </div>
+                      }
+                    </div>
+
+                    <div class="form-check mb-3">
+                      <input
+                        id="opcionCorrecta"
+                        type="checkbox"
+                        class="form-check-input"
+                        [formField]="formOpcion.es_correcta"
+                        [class.is-invalid]="formOpcion.es_correcta().touched() && formOpcion.es_correcta().invalid()"
+                      />
+                      <label class="form-check-label" for="opcionCorrecta">
+                        Esta es la opción correcta
+                      </label>
+                      @if (formOpcion.es_correcta().touched() && formOpcion.es_correcta().invalid()) {
+                        <div class="invalid-feedback d-block" role="alert">
+                          {{ formOpcion.es_correcta().errors()[0].message }}
+                        </div>
+                      }
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" [disabled]="formOpcion().submitting()">
+                      @if (formOpcion().submitting()) {
+                        Guardando...
+                      } @else if (opcionEditando()) {
+                        Guardar cambios
+                      } @else {
+                        Agregar opción
+                      }
+                    </button>
+                  </form>
+                </div>
+              </div>
+            }
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>

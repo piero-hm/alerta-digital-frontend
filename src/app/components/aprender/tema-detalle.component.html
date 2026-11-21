@@ -1,0 +1,122 @@
+<div class="tema-page">
+  <app-estado-pantalla
+    [cargando]="cargando()"
+    [error]="error()"
+    (reintentar)="cargar()"
+  />
+
+  @if (!cargando() && !error() && tema(); as t) {
+    <div class="tema-layout">
+      <!-- Columna principal -->
+      <main class="tema-main">
+        <button type="button" class="back-btn" (click)="null" routerLink="/aprender">
+          <app-icon name="flecha-izq" [size]="20" />
+          Volver a los temas
+        </button>
+
+        <header class="tema-header">
+          <span class="chip chip--info">{{ etiquetaPublico(t.publico_objetivo) }}</span>
+          <h1 class="tema-title">{{ t.titulo }}</h1>
+          @if (t.resumen) {
+            <p class="tema-subtitle">{{ t.resumen }}</p>
+          }
+        </header>
+
+        <article class="tema-content">
+          @for (bloque of t.bloques; track bloque.id) {
+            @if (bloque.tipo === 'texto') {
+              <div class="bloque-texto" [class.bloque-texto--lead]="esPrimerTexto(t, bloque)">
+                <div [innerHTML]="renderMarkdown(bloque.contenido)"></div>
+              </div>
+            } @else if (bloque.tipo === 'alerta') {
+              <div class="bloque-alerta">
+                <app-icon-tile name="advertencia" [size]="44" color="warn" />
+                <div>
+                  <h3 class="bloque-alerta__title">Atención</h3>
+                  <div [innerHTML]="renderMarkdown(bloque.contenido)"></div>
+                </div>
+              </div>
+            } @else if (bloque.tipo === 'lista') {
+              <ul class="bloque-lista">
+                @for (item of dividirLista(bloque.contenido); track item; let i = $index) {
+                  <li class="bloque-lista__item">
+                    <span class="bloque-lista__num">{{ i + 1 }}</span>
+                    <span>{{ item }}</span>
+                  </li>
+                }
+              </ul>
+              } @else if (bloque.tipo === 'video' && bloque.recurso_url) {
+                <a class="bloque-video-link"
+                  [href]="'https://www.youtube.com/watch?v=' + bloque.recurso_url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  [attr.aria-label]="'Ver video en YouTube: ' + t.titulo">
+                  <span class="bloque-video-link__icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </span>
+                  <span>Ver video en YouTube</span>
+                </a>
+              }
+
+            @else if (bloque.tipo === 'video' && urlVideo(bloque.recurso_url)) {
+              <div class="bloque-video">
+                <iframe
+                  [src]="urlVideo(bloque.recurso_url)!"
+                  [title]="'Video: ' + t.titulo"
+                  loading="lazy"
+                  allowfullscreen
+                ></iframe>
+              </div>
+            }
+          }
+        </article>
+
+        <section class="tema-cierre">
+          <h2>¿Listo para practicar?</h2>
+          <p>Pon a prueba lo que aprendiste con preguntas y ejemplos.</p>
+          <div class="tema-cierre__actions">
+            <a class="btn btn-primary btn-lg" [routerLink]="['/practicar', t.slug]">Practicar este tema</a>
+            <a class="btn btn-secondary btn-lg" routerLink="/aprender">Ver otros temas</a>
+          </div>
+        </section>
+
+        @if (prevTema() || nextTema()) {
+          <nav class="tema-nav">
+            @if (prevTema(); as p) {
+              <a class="tema-nav__link" [routerLink]="['/aprender', p.slug]">
+                <app-icon name="flecha-izq" [size]="20" />
+                {{ p.titulo }}
+              </a>
+            } @else {
+              <span></span>
+            }
+            @if (nextTema(); as n) {
+              <a class="tema-nav__link tema-nav__link--right" [routerLink]="['/aprender', n.slug]">
+                {{ n.titulo }}
+                <app-icon name="flecha-der" [size]="20" />
+              </a>
+            }
+          </nav>
+        }
+      </main>
+
+      <!-- Sidebar sticky -->
+      <aside class="tema-side">
+        <div class="side-card">
+          <h3>Resumen</h3>
+          <ul class="side-list">
+            <li><span>Público</span><strong>{{ etiquetaPublico(t.publico_objetivo) }}</strong></li>
+            <li><span>Tiempo de lectura</span><strong>{{ tiempoLectura(t) }} min</strong></li>
+            <li><span>Bloques</span><strong>{{ t.bloques.length }}</strong></li>
+          </ul>
+        </div>
+        <div class="side-card side-card--action">
+          <a class="btn btn-primary btn-lg w-100" [routerLink]="['/practicar', t.slug]">Practicar este tema</a>
+          <a class="btn btn-secondary btn-lg w-100" routerLink="/aprender">Ver otros temas</a>
+        </div>
+      </aside>
+    </div>
+  }
+</div>

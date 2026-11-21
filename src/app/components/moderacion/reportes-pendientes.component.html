@@ -1,0 +1,138 @@
+<div class="container-xxl px-0">
+  <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+    <div>
+      <h1 class="h2 mb-2">Moderación de reportes</h1>
+      <p class="fs-5 text-secondary mb-0">
+        Revisa los reportes recibidos. Los reportes validados aparecen como alertas
+        públicas.
+      </p>
+    </div>
+
+    <div class="w-100" style="max-width: 18rem;">
+      <label class="form-label" for="filtroEstado">Filtrar por estado</label>
+      <select id="filtroEstado" class="form-select" [value]="filtro()" (change)="cambiarFiltro($event)">
+        <option value="pendiente">Pendientes</option>
+        <option value="validado">Validados</option>
+        <option value="rechazado">Rechazados</option>
+        <option value="">Todos</option>
+      </select>
+    </div>
+  </div>
+
+  @if (!cargando() && !error()) {
+    <div class="alert alert-info">
+      Hay <strong>{{ pendientes() }}</strong> reportes pendientes en la lista actual.
+    </div>
+  }
+
+  <app-estado-pantalla
+    [cargando]="cargando()"
+    [error]="error()"
+    [vacio]="!cargando() && !error() && reportes().length === 0"
+    mensajeVacio="No hay reportes con este estado."
+    (reintentar)="cargar()"
+  />
+
+  @if (!cargando() && !error() && reportes().length > 0) {
+    <div class="d-flex flex-column gap-3">
+      @for (reporte of reportes(); track reporte.id) {
+        <article class="card">
+          <div class="card-body">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+              <div class="d-flex flex-wrap gap-2">
+                <span class="badge bg-primary text-capitalize">{{ reporte.tipo_fraude }}</span>
+                <span class="badge bg-secondary text-capitalize">{{ reporte.canal }}</span>
+                <span class="badge bg-light text-dark border">{{ reporte.departamento }}</span>
+              </div>
+              <span [class]="clasesEstado(reporte.estado)">{{ reporte.estado }}</span>
+            </div>
+
+            <p class="mb-2">{{ reporte.descripcion }}</p>
+
+            <div class="row g-2 text-secondary small mb-2">
+              <div class="col-12 col-md-4">
+                <span class="fw-semibold">Reporte:</span> #{{ reporte.id }}
+              </div>
+              <div class="col-12 col-md-4">
+                <span class="fw-semibold">Fecha del incidente:</span>
+                {{ formatoFecha(reporte.fecha_incidente) }}
+              </div>
+              <div class="col-12 col-md-4">
+                <span class="fw-semibold">Monto:</span> {{ moneda(reporte.monto_afectado) }}
+              </div>
+              <div class="col-12 col-md-6">
+                <span class="fw-semibold">Email:</span> {{ reporte.email }}
+              </div>
+              <div class="col-12 col-md-6">
+                <span class="fw-semibold">Usuario:</span>
+                <span class="text-break">{{ reporte.usuario_id }}</span>
+              </div>
+              <div class="col-12">
+                <span class="fw-semibold">Enviado:</span> {{ formatoFecha(reporte.creado_en) }}
+              </div>
+            </div>
+
+            @if (reporte.evidencia_url; as evidencia) {
+              @if (enlaceSeguro(evidencia)) {
+                <p class="mb-2">
+                  <a [href]="evidencia" target="_blank" rel="noopener noreferrer">
+                    Ver evidencia
+                  </a>
+                </p>
+              }
+            }
+
+            @if (reporte.estado === 'pendiente') {
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-success" (click)="abrirConfirmacion(reporte, 'validado')">
+                  Validar
+                </button>
+                <button type="button" class="btn btn-outline-danger" (click)="abrirConfirmacion(reporte, 'rechazado')">
+                  Rechazar
+                </button>
+              </div>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  }
+</div>
+
+@if (modalAbierto()) {
+  <div class="modal d-block" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="tituloModalConfirmacion">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="tituloModalConfirmacion" class="modal-title h5">{{ tituloModal() }}</h2>
+          <button type="button" class="btn-close" aria-label="Cerrar" [disabled]="procesando()" (click)="cerrarModal()"></button>
+        </div>
+        <div class="modal-body">
+          @if (reporteSeleccionado(); as reporte) {
+            <p class="mb-2">Reporte #{{ reporte.id }} — {{ reporte.tipo_fraude }}</p>
+            <p class="mb-0">
+              @if (nuevoEstado() === 'validado') {
+                Al validarlo, el reporte podrá mostrarse en las alertas públicas.
+              } @else {
+                El reporte no se mostrará en las alertas públicas.
+              }
+            </p>
+          }
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" [disabled]="procesando()" (click)="cerrarModal()">
+            Cancelar
+          </button>
+          <button type="button" class="btn" [class.btn-success]="nuevoEstado() === 'validado'" [class.btn-danger]="nuevoEstado() === 'rechazado'" [disabled]="procesando()" (click)="confirmar()">
+            @if (procesando()) {
+              Guardando...
+            } @else {
+              Confirmar
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop show"></div>
+}

@@ -1,0 +1,63 @@
+<div class="container-xxl px-0">
+  <div class="mb-4">
+    <h1 class="h2 mb-2">Alertas públicas</h1>
+    <p class="fs-5 text-secondary mb-0">
+      Estos son reportes de estafas que fueron revisados y validados. No incluyen datos
+      personales de quien reportó.
+    </p>
+  </div>
+
+  <app-estado-pantalla
+    [cargando]="cargando()"
+    [error]="error()"
+    [vacio]="!cargando() && !error() && alertas().length === 0"
+    mensajeVacio="Todavía no hay alertas públicas validadas."
+    (reintentar)="cargar()"
+  />
+
+  @if (!cargando() && !error() && alertas().length > 0) {
+    <p class="text-secondary">
+      Mostrando {{ alertas().length }} de {{ total() }} alertas.
+    </p>
+
+    <div class="row g-3">
+      @for (alerta of alertas(); track $index) {
+        <div class="col-12 col-lg-6">
+          <article class="card h-100">
+            <div class="card-body">
+              <div class="d-flex flex-wrap gap-2 mb-2">
+                <span class="badge bg-primary text-capitalize">{{ alerta.tipo_fraude }}</span>
+                <span class="badge bg-secondary text-capitalize">{{ alerta.canal }}</span>
+                <span class="badge bg-light text-dark border">{{ alerta.departamento }}</span>
+              </div>
+              <p class="mb-2">{{ alerta.descripcion }}</p>
+              <p class="text-secondary small mb-0">
+                Fecha del incidente: {{ formatoFecha(alerta.fecha_incidente) }}
+              </p>
+            </div>
+          </article>
+        </div>
+      }
+    </div>
+
+    <nav class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-4" aria-label="Paginación de alertas">
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        [disabled]="pagina() === 1"
+        (click)="cambiarPagina(-1)"
+      >
+        Anterior
+      </button>
+      <span class="fw-semibold">Página {{ pagina() }} de {{ totalPaginas() }}</span>
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        [disabled]="pagina() >= totalPaginas()"
+        (click)="cambiarPagina(1)"
+      >
+        Siguiente
+      </button>
+    </nav>
+  }
+</div>

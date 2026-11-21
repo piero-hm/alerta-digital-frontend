@@ -1,0 +1,46 @@
+<div class="perfil-page">
+  <h1 class="perfil-title">Mi perfil</h1>
+
+  @if (auth.perfil(); as perfil) {
+    <section class="perfil-card">
+      <div class="perfil-card__header">
+        <div class="perfil-avatar">{{ perfil.nombres.charAt(0).toUpperCase() }}</div>
+        <div class="perfil-card__info">
+          <h2>{{ perfil.nombres }} {{ perfil.apellido_paterno }}</h2>
+          <p>{{ perfil.email }}</p>
+          <span class="perfil-role">{{ etiquetaRol(perfil.rol) }}</span>
+        </div>
+      </div>
+
+      <dl class="perfil-dl">
+        <div><dt>DNI</dt><dd>{{ perfil.dni }}</dd></div>
+        <div><dt>Nombres</dt><dd>{{ perfil.nombres }}</dd></div>
+        <div><dt>Apellido paterno</dt><dd>{{ perfil.apellido_paterno }}</dd></div>
+        <div><dt>Apellido materno</dt><dd>{{ perfil.apellido_materno || 'No registrado' }}</dd></div>
+        <div>
+          <dt>Estado</dt>
+          <dd>
+            @if (perfil.activo) {
+              <span class="perfil-status perfil-status--ok">Activo</span>
+            } @else {
+              <span class="perfil-status">Inactivo</span>
+            }
+          </dd>
+        </div>
+        <div><dt>Aceptó datos</dt><dd>{{ formatoFecha(perfil.acepto_datos_en) }}</dd></div>
+        <div><dt>Cuenta creada</dt><dd>{{ formatoFecha(perfil.creado_en) }}</dd></div>
+      </dl>
+
+      <div class="perfil-actions">
+        <a class="btn btn-primary" routerLink="/mis-reportes">Ver mis reportes</a>
+        <a class="btn btn-secondary" routerLink="/reportar">Reportar una estafa</a>
+        <button type="button" class="btn btn-outline-danger" (click)="logout()">Cerrar sesión</button>
+      </div>
+    </section>
+  } @else {
+    <div class="alert alert-warning">
+      No encontramos tu perfil.
+      <a class="alert-link" routerLink="/auth/completar-perfil">Completar perfil</a>.
+    </div>
+  }
+</div>

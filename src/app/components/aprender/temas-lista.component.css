@@ -1,0 +1,113 @@
+:host { display: block; }
+
+.temas-page { max-width: 1280px; margin: 0 auto; padding: 32px; }
+
+.temas-header { margin-bottom: 24px; }
+
+.temas-header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+
+.temas-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.filtro-chip {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.filtro-chip:hover { background: var(--surface-3); color: var(--text-primary); }
+
+.filtro-chip.is-active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.temas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 1199px) { .temas-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 767px) { .temas-grid { grid-template-columns: 1fr; } }
+
+.tema-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 150ms ease, transform 180ms ease;
+}
+
+.tema-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+
+.tema-card__title {
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.tema-card__resumen {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+.tema-card__link {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.chip--info { background: var(--info-soft); color: var(--info); }
+
+@media (max-width: 767px) {
+  .temas-page { padding: 16px; }
+}

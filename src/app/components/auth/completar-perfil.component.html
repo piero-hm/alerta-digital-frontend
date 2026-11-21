@@ -1,0 +1,101 @@
+<div class="container py-4 py-lg-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8 col-xl-7">
+      <div class="card">
+        <div class="card-body p-4 p-lg-5">
+          <h1 class="h2 mb-2">Completa tu perfil</h1>
+          <p class="text-secondary mb-4">
+            Tu cuenta existe, pero todavía falta asociar tus datos. Valida tu DNI para
+            terminar.
+          </p>
+
+          @if (!datosDni()) {
+            <form [formRoot]="dniForm">
+              <div class="mb-3">
+                <label class="form-label" for="perfilDni">Número de DNI</label>
+                <input
+                  id="perfilDni"
+                  type="text"
+                  inputmode="numeric"
+                  class="form-control form-control-lg"
+                  autocomplete="off"
+                  placeholder="8 dígitos"
+                  [formField]="dniForm.dni"
+                  [class.is-invalid]="dniForm.dni().touched() && dniForm.dni().invalid()"
+                />
+                @if (dniForm.dni().touched() && dniForm.dni().invalid()) {
+                  <div class="invalid-feedback d-block" role="alert">
+                    {{ dniForm.dni().errors()[0].message }}
+                  </div>
+                }
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg" [disabled]="dniForm().submitting()">
+                @if (dniForm().submitting()) {
+                  Consultando...
+                } @else {
+                  Consultar DNI
+                }
+              </button>
+            </form>
+          } @else if (datosDni(); as persona) {
+            <div class="alert alert-light border">
+              <p class="fw-semibold mb-2">Datos encontrados</p>
+              <dl class="row mb-0">
+                <dt class="col-sm-4">DNI</dt>
+                <dd class="col-sm-8">{{ persona.dni }}</dd>
+                <dt class="col-sm-4">Nombres</dt>
+                <dd class="col-sm-8">{{ persona.nombres }}</dd>
+                <dt class="col-sm-4">Apellidos</dt>
+                <dd class="col-sm-8 mb-0">
+                  {{ persona.apellido_paterno }}
+                  {{ persona.apellido_materno || '' }}
+                </dd>
+              </dl>
+              <button type="button" class="btn btn-outline-secondary btn-sm mt-3" (click)="cambiarDni()">
+                Cambiar DNI
+              </button>
+            </div>
+
+            <form [formRoot]="perfilForm">
+              @if (perfilForm().errors().length > 0) {
+                <div class="alert alert-danger" role="alert">
+                  {{ perfilForm().errors()[0].message }}
+                </div>
+              }
+
+              <div class="form-check mb-4">
+                <input
+                  id="perfilAceptoDatos"
+                  type="checkbox"
+                  class="form-check-input"
+                  [formField]="perfilForm.acepto_datos"
+                />
+                <label class="form-check-label" for="perfilAceptoDatos">
+                  Acepto el tratamiento de mis datos personales para completar mi perfil.
+                </label>
+                @if (perfilForm.acepto_datos().touched() && perfilForm.acepto_datos().invalid()) {
+                  <div class="invalid-feedback d-block" role="alert">
+                    {{ perfilForm.acepto_datos().errors()[0].message }}
+                  </div>
+                }
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="perfilForm().submitting()">
+                @if (perfilForm().submitting()) {
+                  Guardando...
+                } @else {
+                  Completar perfil
+                }
+              </button>
+            </form>
+          }
+
+          <p class="text-center mt-4 mb-0">
+            <a routerLink="/">Volver al inicio</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,138 @@
+:host { display: block; }
+
+.practicar-page { max-width: 1280px; margin: 0 auto; padding: 32px; }
+
+.practicar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.practicar-header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+
+.practicar-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.guest-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--info-soft);
+  border: 1px solid rgba(56,189,248,0.35);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.guest-banner__text { flex: 1; min-width: 0; }
+.guest-banner__text p { margin: 0; font-size: 1.0625rem; color: var(--text-primary); }
+
+.guest-banner__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.practicar-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 767px) { .practicar-grid { grid-template-columns: 1fr; } }
+
+.practicar-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: border-color 150ms ease, transform 180ms ease;
+}
+
+.practicar-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+
+.practicar-card__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.practicar-card__head h2 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.practicar-card__desc {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0;
+  flex: 1;
+}
+
+.practicar-progress__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.progress-track {
+  height: 8px;
+  background: var(--surface-3);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 600ms ease;
+}
+
+.progress-fill.is-ok { background: var(--success); }
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.status-chip--ok {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.practicar-card__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 767px) {
+  .practicar-page { padding: 16px; }
+}

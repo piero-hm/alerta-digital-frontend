@@ -1,0 +1,144 @@
+<section class="card mb-4">
+  <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <h2 class="h5 mb-0">{{ tituloFormulario() }}</h2>
+    @if (bloqueEditando()) {
+      <button type="button" class="btn btn-sm btn-outline-secondary" (click)="cancelarEdicion()">
+        Cancelar edición
+      </button>
+    }
+  </div>
+  <div class="card-body">
+    <form [formRoot]="form">
+      @if (form().errors().length > 0) {
+        <div class="alert alert-danger" role="alert">
+          {{ form().errors()[0].message }}
+        </div>
+      }
+
+      <div class="row g-3">
+        <div class="col-12 col-md-3">
+          <label class="form-label" for="bloqueOrden">Orden</label>
+          <input
+            id="bloqueOrden"
+            type="number"
+            class="form-control"
+            [formField]="form.orden"
+            [class.is-invalid]="form.orden().touched() && form.orden().invalid()"
+          />
+          @if (form.orden().touched() && form.orden().invalid()) {
+            <div class="invalid-feedback d-block" role="alert">
+              {{ form.orden().errors()[0].message }}
+            </div>
+          }
+        </div>
+
+        <div class="col-12 col-md-4">
+          <label class="form-label" for="bloqueTipo">Tipo de bloque</label>
+          <select id="bloqueTipo" class="form-select" [formField]="form.tipo">
+            <option value="texto">Texto</option>
+            <option value="alerta">Alerta</option>
+            <option value="lista">Lista</option>
+            <option value="imagen">Imagen</option>
+            <option value="video">Video de YouTube</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-md-5">
+          <label class="form-label" for="bloqueRecurso">
+            Recurso ({{ requiereRecurso() ? 'obligatorio' : 'opcional' }})
+          </label>
+          <input
+            id="bloqueRecurso"
+            type="text"
+            class="form-control"
+            [placeholder]="modelo().tipo === 'video' ? 'ID de YouTube' : 'https://ejemplo.com/imagen.jpg'"
+            [formField]="form.recurso_url"
+            [class.is-invalid]="form.recurso_url().touched() && form.recurso_url().invalid()"
+          />
+          @if (modelo().tipo === 'video') {
+            <div class="form-text">Solo el ID del video, por ejemplo: dQw4w9WgXcQ.</div>
+          } @else if (modelo().tipo === 'imagen') {
+            <div class="form-text">Dirección completa de la imagen.</div>
+          } @else {
+            <div class="form-text">Déjalo vacío para este tipo de bloque.</div>
+          }
+          @if (form.recurso_url().touched() && form.recurso_url().invalid()) {
+            <div class="invalid-feedback d-block" role="alert">
+              {{ form.recurso_url().errors()[0].message }}
+            </div>
+          }
+        </div>
+
+        <div class="col-12">
+          <label class="form-label" for="bloqueContenido">
+            Contenido ({{ requiereContenido() ? 'obligatorio' : 'opcional' }})
+          </label>
+          <textarea
+            id="bloqueContenido"
+            class="form-control"
+            rows="4"
+            [formField]="form.contenido"
+            [class.is-invalid]="form.contenido().touched() && form.contenido().invalid()"
+          ></textarea>
+          <div class="form-text">
+            Para listas, escribe un elemento por línea. No se admite HTML.
+          </div>
+          @if (form.contenido().touched() && form.contenido().invalid()) {
+            <div class="invalid-feedback d-block" role="alert">
+              {{ form.contenido().errors()[0].message }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <button type="submit" class="btn btn-primary" [disabled]="form().submitting()">
+          @if (form().submitting()) {
+            Guardando...
+          } @else if (bloqueEditando()) {
+            Guardar cambios
+          } @else {
+            Agregar bloque
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-header">
+    <h2 class="h5 mb-0">Bloques del tema ({{ bloques().length }})</h2>
+  </div>
+  <div class="card-body">
+    @if (bloques().length === 0) {
+      <p class="text-secondary mb-0">Este tema todavía no tiene bloques.</p>
+    } @else {
+      <div class="d-flex flex-column gap-3">
+        @for (bloque of bloques(); track bloque.id) {
+          <article class="border rounded p-3">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+              <div class="d-flex flex-wrap gap-2 align-items-center">
+                <span class="badge bg-primary">Orden {{ bloque.orden }}</span>
+                <span class="badge bg-secondary">{{ etiquetaTipo(bloque.tipo) }}</span>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="editar(bloque)">
+                Editar
+              </button>
+            </div>
+
+            @if (bloque.contenido) {
+              <p class="mb-2" style="white-space: pre-line;">{{ bloque.contenido }}</p>
+            }
+
+            @if (bloque.recurso_url) {
+              <p class="mb-0 text-secondary small text-break">
+                <span class="fw-semibold">Recurso:</span> {{ bloque.recurso_url }}
+              </p>
+            }
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>

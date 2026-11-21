@@ -1,0 +1,76 @@
+<div class="practicar-page">
+  <header class="practicar-header">
+    <div>
+      <h1>Practicar</h1>
+      <p class="practicar-subtitle">Pon a prueba lo que aprendiste y revisa tu progreso.</p>
+    </div>
+    <a class="btn btn-secondary" routerLink="/verificar-enlace">Verificar un enlace</a>
+  </header>
+
+  @if (!auth.perfilCompleto()) {
+    <div class="guest-banner">
+      <app-icon-tile name="info" [size]="44" color="info" />
+      <div class="guest-banner__text">
+        <p>Puedes leer las preguntas sin iniciar sesión, pero para responder y guardar tu progreso necesitas una cuenta completa.</p>
+      </div>
+      <div class="guest-banner__actions">
+        @if (!auth.autenticado()) {
+          <a class="btn btn-secondary" routerLink="/auth/login">Iniciar sesión</a>
+        } @else {
+          <a class="btn btn-secondary" routerLink="/auth/completar-perfil">Completar perfil</a>
+        }
+        <a class="btn btn-primary" routerLink="/auth/registro">Crear cuenta</a>
+      </div>
+    </div>
+  }
+
+  <app-estado-pantalla
+    [cargando]="cargando()"
+    [error]="error()"
+    [vacio]="!cargando() && !error() && temas().length === 0"
+    mensajeVacio="Todavía no hay temas disponibles para practicar."
+    (reintentar)="cargar()"
+  >
+    <a class="btn btn-outline-primary" routerLink="/aprender">Ir a aprender</a>
+  </app-estado-pantalla>
+
+  @if (!cargando() && !error() && temas().length > 0) {
+    <div class="practicar-grid">
+      @for (tema of temas(); track tema.id) {
+        @let avance = progresoDe(tema.id);
+        <article class="practicar-card">
+          <div class="practicar-card__head">
+            <app-icon-tile name="practicar" [size]="44" color="violet" />
+            <h2>{{ tema.titulo }}</h2>
+          </div>
+          <p class="practicar-card__desc">{{ tema.resumen || 'Preguntas cortas para reconocer estafas.' }}</p>
+
+          @if (avance) {
+            <div class="practicar-progress">
+              <div class="practicar-progress__head">
+                <span>{{ avance.correctas }} de {{ avance.total_preguntas }} correctas</span>
+                @if (avance.completado) {
+                  <span class="status-chip status-chip--ok">Completado</span>
+                } @else {
+                  <span class="status-chip">{{ avance.porcentaje }}%</span>
+                }
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" [style.width.%]="avance.porcentaje" [class.is-ok]="avance.completado"></div>
+              </div>
+            </div>
+          } @else {
+            <div class="practicar-progress">
+              <span class="status-chip">No iniciado</span>
+            </div>
+          }
+
+          <div class="practicar-card__actions">
+            <a class="btn btn-primary" [routerLink]="['/practicar', tema.slug]">Practicar</a>
+            <a class="btn btn-secondary" [routerLink]="['/aprender', tema.slug]">Leer tema</a>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</div>

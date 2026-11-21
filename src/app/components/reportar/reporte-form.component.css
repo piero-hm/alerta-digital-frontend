@@ -1,0 +1,27 @@
+:host { display: block; }
+
+.container-xxl { max-width: 1100px; }
+
+.form-control,
+.form-select {
+  min-height: 56px;
+  font-size: 1.125rem;
+}
+
+.form-label {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.btn-lg {
+  min-height: 52px;
+  padding: 0 24px;
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+textarea.form-control {
+  min-height: 120px;
+}
+
+.invalid-feedback { font-size: 0.9375rem; }

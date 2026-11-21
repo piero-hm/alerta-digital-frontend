@@ -1,0 +1,50 @@
+:host {
+  display: block;
+}
+
+/* Tarjeta de alerta pública */
+article.card {
+  transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+
+article.card:hover {
+  border-color: var(--ad-border-fx) !important;
+  transform: translateY(-2px);
+}
+
+/* Badges de tipo y canal */
+.badge-tipo {
+  background: var(--ad-warn-soft) !important;
+  color: var(--ad-warn) !important;
+}
+.badge-canal {
+  background: var(--ad-info-soft) !important;
+  color: var(--ad-info) !important;
+}
+.badge-depto {
+  background: var(--ad-surface-3) !important;
+  color: var(--ad-text-2) !important;
+}
+
+/* Fecha pequeña */
+.fecha-incidente {
+  font-size: 0.8125rem;
+  color: var(--ad-text-3) !important;
+}
+
+/* Paginación */
+.paginacion-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--ad-border);
+}
+.paginacion-info {
+  font-size: 0.875rem;
+  color: var(--ad-text-3);
+  font-variant-numeric: tabular-nums;
+}

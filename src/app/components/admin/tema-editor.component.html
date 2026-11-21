@@ -1,0 +1,141 @@
+<div class="container-xxl px-0">
+  <nav aria-label="Navegación de administración" class="mb-3">
+    <a routerLink="/admin/temas" class="link-secondary">&larr; Volver a temas</a>
+  </nav>
+
+  <app-estado-pantalla
+    [cargando]="cargando()"
+    [error]="error()"
+    (reintentar)="cargar()"
+  />
+
+  @if (!cargando() && !error() && detalle(); as tema) {
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+      <div>
+        <h1 class="h2 mb-2">{{ tema.titulo }}</h1>
+        <div class="d-flex flex-wrap gap-2">
+          <span class="badge bg-secondary">{{ etiquetaPublico(tema.publico_objetivo) }}</span>
+          @if (tema.publicado) {
+            <span class="badge bg-success">Publicado</span>
+          } @else {
+            <span class="badge bg-secondary">No publicado</span>
+          }
+          <span class="badge bg-light text-dark border">{{ tema.slug }}</span>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-lg align-self-start"
+        [class.btn-success]="!tema.publicado"
+        [class.btn-outline-secondary]="tema.publicado"
+        [disabled]="cambiandoPublicacion()"
+        (click)="cambiarPublicacion()"
+      >
+        @if (cambiandoPublicacion()) {
+          Guardando...
+        } @else if (tema.publicado) {
+          Despublicar tema
+        } @else {
+          Publicar tema
+        }
+      </button>
+    </div>
+
+    <section class="card mb-4">
+      <div class="card-header">
+        <h2 class="h5 mb-0">Datos del tema</h2>
+      </div>
+      <div class="card-body">
+        <form [formRoot]="form">
+          @if (form().errors().length > 0) {
+            <div class="alert alert-danger" role="alert">
+              {{ form().errors()[0].message }}
+            </div>
+          }
+
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label class="form-label" for="editarSlug">Identificador (slug)</label>
+              <input
+                id="editarSlug"
+                type="text"
+                class="form-control"
+                [formField]="form.slug"
+                [class.is-invalid]="form.slug().touched() && form.slug().invalid()"
+              />
+              @if (form.slug().touched() && form.slug().invalid()) {
+                <div class="invalid-feedback d-block" role="alert">
+                  {{ form.slug().errors()[0].message }}
+                </div>
+              }
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label class="form-label" for="editarTitulo">Título</label>
+              <input
+                id="editarTitulo"
+                type="text"
+                class="form-control"
+                [formField]="form.titulo"
+                [class.is-invalid]="form.titulo().touched() && form.titulo().invalid()"
+              />
+              @if (form.titulo().touched() && form.titulo().invalid()) {
+                <div class="invalid-feedback d-block" role="alert">
+                  {{ form.titulo().errors()[0].message }}
+                </div>
+              }
+            </div>
+
+            <div class="col-12 col-md-8">
+              <label class="form-label" for="editarResumen">Resumen</label>
+              <textarea
+                id="editarResumen"
+                class="form-control"
+                rows="2"
+                [formField]="form.resumen"
+                [class.is-invalid]="form.resumen().touched() && form.resumen().invalid()"
+              ></textarea>
+              @if (form.resumen().touched() && form.resumen().invalid()) {
+                <div class="invalid-feedback d-block" role="alert">
+                  {{ form.resumen().errors()[0].message }}
+                </div>
+              }
+            </div>
+
+            <div class="col-12 col-md-4">
+              <label class="form-label" for="editarPublico">Público objetivo</label>
+              <select id="editarPublico" class="form-select" [formField]="form.publico_objetivo">
+                <option value="todos">Todos</option>
+                <option value="adulto_mayor">Adultos mayores</option>
+                <option value="joven">Jóvenes</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <button type="submit" class="btn btn-primary" [disabled]="form().submitting()">
+              @if (form().submitting()) {
+                Guardando...
+              } @else {
+                Guardar datos del tema
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <app-bloques-admin
+      [temaId]="tema.id"
+      [bloques]="tema.bloques"
+      (actualizado)="recargarContenido()"
+    />
+
+    <app-preguntas-admin
+      [temaId]="tema.id"
+      [preguntas]="tema.preguntas"
+      (actualizado)="recargarContenido()"
+    />
+  }
+</div>

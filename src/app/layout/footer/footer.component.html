@@ -1,0 +1,121 @@
+<footer class="app-footer">
+  <div class="app-footer__inner">
+    <!-- CTA -->
+    <section class="footer-cta">
+      <div class="footer-cta__content">
+        <h2 class="footer-cta__title">¿Recibiste un mensaje sospechoso?</h2>
+        <p class="footer-cta__text">Verifícalo antes de responder o compartir datos.</p>
+        <div class="footer-cta__actions">
+          <a class="footer-cta__btn footer-cta__btn--primary" routerLink="/verificar-enlace">Verificar enlace</a>
+          <a class="footer-cta__btn footer-cta__btn--secondary" routerLink="/reportar">Reportar una estafa</a>
+        </div>
+      </div>
+      <div class="footer-cta__deco" aria-hidden="true">
+        <div class="footer-cta__ring footer-cta__ring--outer"></div>
+        <div class="footer-cta__ring footer-cta__ring--inner"></div>
+        <div class="footer-cta__tile">
+          <app-icon name="escudo-check" [size]="64" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Aviso de seguridad -->
+    <div class="footer-security">
+      <app-icon name="escudo-alerta" [size]="24" />
+      <p>Alerta Digital nunca te pedirá contraseñas, claves, códigos de verificación ni dinero.</p>
+    </div>
+
+    <!-- Grid -->
+    <div class="footer-grid">
+      <!-- Col 1 marca -->
+      <div class="footer-col footer-col--brand">
+        <div class="footer-brand">
+        <img class="sidebar__mark" src="/images/logo.png" alt="Alerta Digital" width="40" height="40" />
+
+          <span class="footer-brand-name">Alerta Digital</span>
+        </div>
+        <p class="footer-desc">
+          Plataforma educativa para reconocer estafas y proteger tus datos personales.
+        </p>
+        <span class="footer-badge">Proyecto académico</span>
+
+      </div>
+
+      <!-- Col 2 módulos -->
+      <details class="footer-col" open>
+        <summary class="footer-col__title">Módulos</summary>
+        <ul class="footer-links">
+          <li><a routerLink="/aprender"><span class="footer-dot footer-dot--info"></span>Aprender</a></li>
+          <li><a routerLink="/practicar"><span class="footer-dot footer-dot--violet"></span>Practicar</a></li>
+          <li><a routerLink="/reportar"><span class="footer-dot footer-dot--warn"></span>Reportar</a></li>
+          <li><a routerLink="/verificar-enlace">Verificar enlace</a></li>
+          <li><a routerLink="/alertas">Alertas públicas</a></li>
+        </ul>
+      </details>
+
+      <!-- Col 3 aprender -->
+      <details class="footer-col" open>
+        <summary class="footer-col__title">Aprende</summary>
+        @if (!temasError() && temas().length > 0) {
+          <ul class="footer-links">
+            @for (t of temas(); track t.id) {
+              <li><a [routerLink]="['/aprender', t.slug]" [title]="t.titulo" class="footer-link-ellipsis">{{ t.titulo }}</a></li>
+            }
+          </ul>
+        }
+        <ul class="footer-links">
+          <li><a routerLink="/aprender">Consejos de seguridad</a></li>
+          <li><a routerLink="/aprender">Cómo funciona</a></li>
+        </ul>
+      </details>
+
+      <!-- Col 4 institucional -->
+      <details class="footer-col" open>
+        <summary class="footer-col__title">Institucional</summary>
+        <ul class="footer-links">
+          <li><a routerLink="/nosotros">Nosotros</a></li>
+          <li><a routerLink="/nosotros#mision">Misión y visión</a></li>
+        </ul>
+      </details>
+
+      <!-- Col 5 victimas -->
+      <details class="footer-col" open>
+        <summary class="footer-col__title">Ayuda ante estafas</summary>
+        <p class="footer-col__text">Busca apoyo en estas instituciones:</p>
+        <ul class="footer-institutions">
+          <li>
+            <app-icon-tile name="policia" [size]="36" color="muted" />
+            <div>
+              <span class="footer-inst-name">Policía Nacional del Perú</span>
+            </div>
+          </li>
+          <li>
+            <app-icon-tile name="sbs" [size]="36" color="muted" />
+            <div>
+              <span class="footer-inst-name">SBS</span>
+            </div>
+          </li>
+          <li>
+            <app-icon-tile name="indecopi" [size]="36" color="muted" />
+            <div>
+              <span class="footer-inst-name">Indecopi</span>
+            </div>
+          </li>
+        </ul>
+      </details>
+    </div>
+
+    <!-- Franja inferior -->
+    <div class="footer-bottom">
+      <span>© 2026 Alerta Digital · Proyecto académico</span>
+      <div class="footer-bottom__links">
+        <a routerLink="/privacidad">Privacidad</a>
+        <a routerLink="/terminos">Términos</a>
+        <a routerLink="/accesibilidad">Accesibilidad</a>
+      </div>
+      <button type="button" class="footer-top" (click)="volverArriba()" aria-label="Volver arriba">
+        <app-icon name="volver-arriba" [size]="24" />
+      </button>
+    </div>
+  </div>
+</footer>

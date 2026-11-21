@@ -1,0 +1,83 @@
+<div class="container-xxl py-4">
+  <h1 class="mb-4">Guía de estilo (desarrollo)</h1>
+
+  <app-section-header title="Íconos" description="Un solo estilo Nerd Fonts filled." label="Fundamentos" />
+  <div class="d-flex flex-wrap gap-3 mb-4">
+    @for (n of iconos; track n) {
+      <app-icon [name]="n" [size]="24" />
+    }
+  </div>
+
+  <app-section-header title="Icon tiles" />
+  <div class="d-flex flex-wrap gap-3 mb-4">
+    <app-icon-tile name="aprender" [size]="36" color="info" />
+    <app-icon-tile name="practicar" [size]="44" color="violet" />
+    <app-icon-tile name="reportar" [size]="56" color="warn" />
+    <app-icon-tile name="escudo" [size]="44" color="success" />
+  </div>
+
+  <app-section-header title="Botones" />
+  <div class="d-flex flex-wrap gap-3 mb-4">
+    <app-button variant="primary">Primario</app-button>
+    <app-button variant="secondary">Secundario</app-button>
+    <app-button variant="ghost">Fantasma</app-button>
+    <app-button variant="danger">Peligro</app-button>
+    <app-button variant="icon" icon="menu" aria-label="Menú"></app-button>
+    <app-button variant="primary" [loading]="true">Cargando</app-button>
+    <app-button variant="primary" [disabled]="true">Deshabilitado</app-button>
+  </div>
+
+  <app-section-header title="Campos" />
+  <div class="row g-3 mb-4" style="max-width: 640px;">
+    <div class="col-12">
+      <app-form-field label="Número de DNI" icon="dni" help="Solo usamos tu DNI para verificar tu identidad." counter="0/8">
+        <input type="text" inputmode="numeric" maxlength="8" placeholder="12345678" />
+      </app-form-field>
+    </div>
+    <div class="col-12">
+      <app-form-field label="Campo con error" icon="correo" error="Escribe tu correo.">
+        <input type="email" placeholder="tu@correo.com" />
+      </app-form-field>
+    </div>
+  </div>
+
+  <app-section-header title="Stepper" />
+  <div class="mb-4" style="max-width: 560px;">
+    <app-stepper [steps]="['Valida tu DNI', 'Crea tu contraseña']" [current]="stepperActual()" />
+    <div class="d-flex gap-2 mt-3">
+      <app-button variant="secondary" (click)="stepperActual.set(0)">Paso 1</app-button>
+      <app-button variant="secondary" (click)="stepperActual.set(1)">Paso 2</app-button>
+    </div>
+  </div>
+
+  <app-section-header title="Tooltip" />
+  <div class="mb-4">
+    <app-tooltip text="Inicia sesión para usar este módulo">
+      <app-button variant="ghost" icon="candado">Con candado</app-button>
+    </app-tooltip>
+  </div>
+
+  <app-section-header title="KPI" />
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-4">
+      <app-kpi-card titulo="Alertas validadas" [valor]="128" icono="alertas" color="warn" descripcion="Últimos 30 días" />
+    </div>
+    <div class="col-12 col-md-4">
+      <app-kpi-card titulo="Monto afectado" [valor]="4520" prefijo="S/" icono="dinero" color="danger" />
+    </div>
+  </div>
+
+  <app-section-header title="Estados" />
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-4">
+      <app-empty-state icon="alertas" title="Sin alertas" description="Aún no hay alertas públicas." />
+    </div>
+    <div class="col-12 col-md-4">
+      <app-error-state mensaje="No se pudo cargar." (reintentar)="null" />
+    </div>
+    <div class="col-12 col-md-4">
+      <app-skeleton [height]="80" />
+      <div class="mt-2"><app-progress-bar [value]="60" /></div>
+    </div>
+  </div>
+</div>

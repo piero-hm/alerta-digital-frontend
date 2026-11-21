@@ -1,0 +1,99 @@
+<header class="topbar">
+  <div class="topbar__inner">
+    <!-- Izquierda -->
+    <div class="topbar__left">
+      <button
+        type="button"
+        class="topbar__menu"
+        (click)="layout.alternarMovil()"
+        aria-label="Abrir menú"
+        aria-controls="sidebar"
+      >
+        <app-icon name="menu" [size]="24" />
+      </button>
+
+      <div class="topbar__title-block">
+        <h1 class="topbar__title">{{ seccion().titulo }}</h1>
+        <nav class="topbar__breadcrumbs" aria-label="Migas de pan">
+          @for (m of seccion().migas; track m; let last = $last) {
+            <span [class.is-current]="last">{{ m }}</span>
+            @if (!last) { <span class="topbar__sep">/</span> }
+          }
+        </nav>
+      </div>
+    </div>
+
+    <!-- Derecha -->
+    <div class="topbar__right">
+      <!-- Fecha -->
+      <span class="topbar__date">
+        <app-icon name="calendario" [size]="22" />
+        {{ hoy }}
+      </span>
+
+      <!-- Tamaño de fuente -->
+      <div class="topbar__font" role="radiogroup" aria-label="Tamaño de letra">
+        <button
+          type="button"
+          role="radio"
+          [attr.aria-checked]="prefs.fuente() === 'a'"
+          [class.is-active]="prefs.fuente() === 'a'"
+          (click)="prefs.establecerFuente('a')"
+        >A</button>
+        <button
+          type="button"
+          role="radio"
+          [attr.aria-checked]="prefs.fuente() === 'a-plus'"
+          [class.is-active]="prefs.fuente() === 'a-plus'"
+          (click)="prefs.establecerFuente('a-plus')"
+        >A+</button>
+        <button
+          type="button"
+          role="radio"
+          [attr.aria-checked]="prefs.fuente() === 'a-plus-plus'"
+          [class.is-active]="prefs.fuente() === 'a-plus-plus'"
+          (click)="prefs.establecerFuente('a-plus-plus')"
+        >A++</button>
+      </div>
+
+      <span class="topbar__divider" aria-hidden="true"></span>
+
+      @if (auth.autenticado()) {
+        <div class="topbar__user">
+          <button
+            type="button"
+            class="topbar__user-btn"
+            (click)="menuUsuario.set(!menuUsuario())"
+            [attr.aria-expanded]="menuUsuario()"
+          >
+            <span class="topbar__avatar">{{ auth.perfil()?.nombres?.charAt(0)?.toUpperCase() ?? 'U' }}</span>
+            <span class="topbar__user-name">{{ auth.perfil()?.nombres }}</span>
+            <app-icon name="flecha-aba" [size]="20" />
+          </button>
+
+          @if (menuUsuario()) {
+            <div class="topbar__dropdown" role="menu">
+              <div class="topbar__dropdown-head">
+                <span class="topbar__dropdown-name">{{ auth.perfil()?.nombres }} {{ auth.perfil()?.apellido_paterno }}</span>
+                <span class="topbar__dropdown-email">{{ auth.session()?.user?.email }}</span>
+                <span class="topbar__dropdown-role">{{ auth.perfil()?.rol }}</span>
+              </div>
+              <a class="topbar__dropdown-item" routerLink="/perfil" (click)="menuUsuario.set(false)" role="menuitem">Mi perfil</a>
+              <a class="topbar__dropdown-item" routerLink="/mis-reportes" (click)="menuUsuario.set(false)" role="menuitem">Mis reportes</a>
+              <button type="button" class="topbar__dropdown-item topbar__dropdown-item--danger" (click)="logout()" role="menuitem">
+                <app-icon name="cerrar-sesion" [size]="20" />
+                Cerrar sesión
+              </button>
+            </div>
+          }
+        </div>
+      } @else {
+        <a class="topbar__ghost" routerLink="/auth/login">
+          <app-icon name="iniciar-sesion" [size]="20" />
+          Iniciar sesión
+        </a>
+        <a class="topbar__primary" routerLink="/auth/registro">Crear cuenta</a>
+      }
+    </div>
+  </div>
+</header>

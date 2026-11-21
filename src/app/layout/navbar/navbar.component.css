@@ -1,0 +1,297 @@
+:host { display: block; }
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: 72px;
+  background: rgba(14, 21, 18, 0.80);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.topbar__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.topbar__menu {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1023px) {
+  .topbar__menu { display: inline-flex; }
+}
+
+.topbar__title-block {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar__title {
+  font-size: 1.375rem;
+  font-weight: 650;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar__breadcrumbs {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.topbar__breadcrumbs .is-current { color: var(--text-primary); }
+
+.topbar__sep { color: var(--text-muted); }
+
+@media (max-width: 639px) {
+  .topbar__breadcrumbs { display: none; }
+}
+
+.topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* Fecha */
+.topbar__date {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+@media (min-width: 1100px) {
+  .topbar__date { display: inline-flex; }
+}
+
+/* Fuente */
+.topbar__font {
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.topbar__font button {
+  height: 100%;
+  padding: 0 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.topbar__font button.is-active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.topbar__font button:hover:not(.is-active) {
+  background: var(--surface-3);
+  color: var(--text-primary);
+}
+
+/* Icon button */
+.topbar__icon-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.topbar__icon-btn:hover {
+  background: var(--surface-3);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.topbar__divider {
+  width: 1px;
+  height: 28px;
+  background: var(--border);
+}
+
+/* Ghost/primary */
+.topbar__ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 150ms ease;
+}
+
+.topbar__ghost:hover { background: var(--surface-2); }
+
+.topbar__primary {
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.topbar__primary:hover { background: var(--accent-hover); }
+
+/* User */
+.topbar__user { position: relative; }
+
+.topbar__user-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 12px 0 8px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.topbar__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.topbar__user-name {
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar__dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 260px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 12px;
+  z-index: 60;
+}
+
+.topbar__dropdown-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+.topbar__dropdown-name { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+.topbar__dropdown-email { font-size: 0.875rem; color: var(--text-muted); }
+.topbar__dropdown-role { font-size: 0.875rem; color: var(--accent); text-transform: capitalize; margin-top: 4px; }
+
+.topbar__dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.topbar__dropdown-item:hover { background: var(--surface-3); color: var(--text-primary); }
+
+.topbar__dropdown-item--danger { color: var(--danger); }
+.topbar__dropdown-item--danger:hover { background: var(--danger-soft); }
+
+/* Móvil: ocultar fecha, fuente, divider? spec says rest moves to panel, but keep font/theme? We keep font/theme visible on tablet; hide breadcrumbs already */
+@media (max-width: 767px) {
+  .topbar { height: 64px; }
+  .topbar__inner { padding: 0 16px; }
+  .topbar__title { font-size: 1.125rem; }
+  .topbar__font { display: none; }
+  .topbar__date { display: none; }
+  .topbar__divider { display: none; }
+  .topbar__user-name { display: none; }
+}

@@ -1,0 +1,138 @@
+<div class="registro-page">
+  <div class="registro-container">
+    <!-- Panel informativo -->
+    <aside class="registro-info">
+      <h2 class="registro-info__title">Únete a Alerta Digital</h2>
+      <ul class="registro-beneficios">
+        <li>
+          <app-icon-tile name="trofeo" [size]="44" color="accent" />
+          <div>
+            <h3>Guarda tu progreso</h3>
+            <p>Registra tu avance en los temas y vuelve cuando quieras.</p>
+          </div>
+        </li>
+        <li>
+          <app-icon-tile name="reportar" [size]="44" color="warn" />
+          <div>
+            <h3>Reporta estafas</h3>
+            <p>Comparte los intentos de fraude que recibes para alertar a otros.</p>
+          </div>
+        </li>
+        <li>
+          <app-icon-tile name="alertas" [size]="44" color="info" />
+          <div>
+            <h3>Recibe alertas</h3>
+            <p>Mantente informado sobre las estafas más frecuentes.</p>
+          </div>
+        </li>
+      </ul>
+      <p class="registro-privacidad">Tu DNI se usa solo para verificar tu identidad.</p>
+    </aside>
+
+    <!-- Formulario -->
+    <div class="registro-form-card">
+      @if (requiereConfirmacion()) {
+        <div class="alert alert-success" role="status">
+          <h1 class="h2 mb-2">Revisa tu correo</h1>
+          <p class="mb-0">Te enviamos un mensaje para confirmar tu cuenta. Cuando lo confirmes, podrás iniciar sesión.</p>
+        </div>
+        <a class="btn btn-primary btn-lg w-100" routerLink="/auth/login">Ir a iniciar sesión</a>
+      } @else {
+        <h1 class="registro-form-card__title">Crear una cuenta</h1>
+        <p class="registro-form-card__desc">Necesitamos tu DNI para verificar tu identidad. Después eliges tu correo y contraseña.</p>
+
+        <app-stepper [steps]="['Valida tu DNI', 'Crea tu contraseña']" [current]="datosDni() ? 1 : 0" />
+
+        @if (!datosDni()) {
+          <form [formRoot]="dniForm" class="registro-form">
+            <app-form-field
+              label="Número de DNI"
+              icon="dni"
+              help="Solo usamos tu DNI para verificar tu identidad."
+              [counter]="dniForm.dni().value().length + '/8'"
+              [error]="dniForm.dni().touched() && dniForm.dni().invalid() ? dniForm.dni().errors()[0]?.message : undefined"
+            >
+              <input
+                id="registroDni"
+                type="text"
+                inputmode="numeric"
+                autocomplete="off"
+                placeholder="8 dígitos"
+                [formField]="dniForm.dni"
+              />
+            </app-form-field>
+
+            <app-button variant="primary" [loading]="dniForm().submitting()" [disabled]="dniForm().submitting()">
+              @if (dniForm().submitting()) { Consultando… } @else { Consultar DNI }
+            </app-button>
+          </form>
+        } @else {
+          <div class="dni-card">
+            <app-icon name="exito" [size]="20" />
+            <div class="dni-card__body">
+              <p class="dni-card__label">Datos encontrados</p>
+              <dl class="dni-card__list">
+                <div><dt>DNI</dt><dd>{{ datosDni()!.dni }}</dd></div>
+                <div><dt>Nombres</dt><dd>{{ datosDni()!.nombres }}</dd></div>
+                <div><dt>Apellidos</dt><dd>{{ datosDni()!.apellido_paterno }} {{ datosDni()!.apellido_materno || '' }}</dd></div>
+              </dl>
+            </div>
+            <app-button variant="ghost" (click)="cambiarDni()">Cambiar DNI</app-button>
+          </div>
+
+          <form [formRoot]="registroForm" class="registro-form">
+            @if (registroForm().errors().length > 0) {
+              <div class="alert alert-danger" role="alert">
+                {{ registroForm().errors()[0].message }}
+              </div>
+            }
+
+            <app-form-field
+              label="Correo electrónico"
+              icon="correo"
+              [error]="registroForm.email().touched() && registroForm.email().invalid() ? registroForm.email().errors()[0]?.message : undefined"
+            >
+              <input id="registroEmail" type="email" autocomplete="email" [formField]="registroForm.email" />
+            </app-form-field>
+
+            <app-form-field
+              label="Contraseña"
+              icon="candado"
+              help="Mínimo 6 caracteres."
+              [error]="registroForm.password().touched() && registroForm.password().invalid() ? registroForm.password().errors()[0]?.message : undefined"
+            >
+              <input id="registroPassword" type="password" autocomplete="new-password" [formField]="registroForm.password" />
+            </app-form-field>
+
+            <app-form-field
+              label="Repite la contraseña"
+              icon="candado"
+              [error]="registroForm.confirmar().touched() && registroForm.confirmar().invalid() ? registroForm.confirmar().errors()[0]?.message : undefined"
+            >
+              <input id="registroConfirmar" type="password" autocomplete="new-password" [formField]="registroForm.confirmar" />
+            </app-form-field>
+
+            <div class="registro-check">
+              <input id="aceptoDatos" type="checkbox" [formField]="registroForm.acepto_datos" />
+              <label for="aceptoDatos">Acepto el tratamiento de mis datos personales para crear mi perfil.</label>
+              @if (registroForm.acepto_datos().touched() && registroForm.acepto_datos().invalid()) {
+                <div class="invalid-feedback d-block" role="alert">
+                  {{ registroForm.acepto_datos().errors()[0].message }}
+                </div>
+              }
+            </div>
+
+            <app-button variant="primary" [loading]="registroForm().submitting()" [disabled]="registroForm().submitting()" [fullWidth]="true">
+              @if (registroForm().submitting()) { Creando cuenta… } @else { Crear cuenta }
+            </app-button>
+          </form>
+        }
+
+        <div class="registro-footer-link">
+          <span>¿Ya tienes una cuenta?</span>
+          <a routerLink="/auth/login">Iniciar sesión</a>
+        </div>
+      }
+    </div>
+  </div>
+</div>

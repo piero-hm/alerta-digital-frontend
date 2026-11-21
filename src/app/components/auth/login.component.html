@@ -1,0 +1,40 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <img class="auth-card__logo" src="/images/logo.png" alt="Alerta Digital" width="48" height="48" />
+    <h1 class="auth-card__title">Iniciar sesión</h1>
+    <p class="auth-card__desc">Usa el correo y la contraseña con los que te registraste.</p>
+
+    <form [formRoot]="form" class="auth-form">
+      @if (form().errors().length > 0) {
+        <div class="alert alert-danger" role="alert">
+          {{ form().errors()[0].message }}
+        </div>
+      }
+
+      <app-form-field
+        label="Correo electrónico"
+        icon="correo"
+        [error]="form.email().touched() && form.email().invalid() ? form.email().errors()[0]?.message : undefined"
+      >
+        <input id="loginEmail" type="email" autocomplete="email" [formField]="form.email" />
+      </app-form-field>
+
+      <app-form-field
+        label="Contraseña"
+        icon="candado"
+        [error]="form.password().touched() && form.password().invalid() ? form.password().errors()[0]?.message : undefined"
+      >
+        <input id="loginPassword" type="password" autocomplete="current-password" [formField]="form.password" />
+      </app-form-field>
+
+      <app-button variant="primary" [loading]="form().submitting()" [disabled]="form().submitting()" [fullWidth]="true">
+        @if (form().submitting()) { Ingresando… } @else { Iniciar sesión }
+      </app-button>
+    </form>
+
+    <div class="auth-footer-link">
+      <span>¿Todavía no tienes cuenta?</span>
+      <a routerLink="/auth/registro">Crear una cuenta</a>
+    </div>
+  </div>
+</div>

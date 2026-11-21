@@ -1,0 +1,37 @@
+<div class="temas-page">
+  <header class="temas-header">
+    <h1>Aprender</h1>
+    <p class="temas-subtitle">Temas cortos y sencillos para reconocer estafas y proteger tu información.</p>
+  </header>
+
+  <div class="filtros">
+    <button type="button" class="filtro-chip" [class.is-active]="filtro() === ''" (click)="cambiarFiltro('')">Todos</button>
+    <button type="button" class="filtro-chip" [class.is-active]="filtro() === 'todos'" (click)="cambiarFiltro('todos')">Contenido general</button>
+    <button type="button" class="filtro-chip" [class.is-active]="filtro() === 'adulto_mayor'" (click)="cambiarFiltro('adulto_mayor')">Adultos mayores</button>
+    <button type="button" class="filtro-chip" [class.is-active]="filtro() === 'joven'" (click)="cambiarFiltro('joven')">Jóvenes</button>
+  </div>
+
+  <app-estado-pantalla
+    [cargando]="cargando()"
+    [error]="error()"
+    [vacio]="!cargando() && !error() && temas().length === 0"
+    mensajeVacio="Todavía no hay temas publicados para este público."
+    (reintentar)="cargar()"
+  >
+    <a class="btn btn-outline-primary" routerLink="/practicar">Ir a practicar</a>
+  </app-estado-pantalla>
+
+  @if (!cargando() && !error() && temas().length > 0) {
+    <div class="temas-grid">
+      @for (tema of temas(); track tema.id) {
+        <a class="tema-card" [routerLink]="['/aprender', tema.slug]">
+          <app-icon-tile name="aprender" [size]="44" color="info" />
+          <h2 class="tema-card__title">{{ tema.titulo }}</h2>
+          <p class="tema-card__resumen">{{ tema.resumen || 'Ingresa para leer este tema.' }}</p>
+          <span class="chip chip--info">{{ etiquetaPublico(tema.publico_objetivo) }}</span>
+          <span class="tema-card__link">Leer tema →</span>
+        </a>
+      }
+    </div>
+  }
+</div>

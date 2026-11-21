@@ -1,0 +1,157 @@
+<aside
+  class="sidebar"
+  [class.sidebar--collapsed]="layout.sidebarColapsado()"
+  [class.sidebar--mobile-open]="layout.sidebarMovilAbierto()"
+  aria-label="Navegación principal"
+>
+  <!-- Cabecera -->
+  <div class="sidebar__header">
+    <div class="sidebar__brand">
+      <img class="sidebar__mark" src="/images/logo.png" alt="Alerta Digital" width="40" height="40" />
+      @if (!layout.sidebarColapsado()) {
+        <div class="sidebar__brand-text">
+          <span class="sidebar__name">Alerta Digital</span>
+          <span class="sidebar__tagline">Ciberseguridad para todos</span>
+        </div>
+      }
+    </div>
+
+    @if (layout.sidebarColapsado()) {
+      <div class="sidebar__sep" aria-hidden="true"></div>
+    }
+  </div>
+
+  <!-- Botón colapsar (escritorio) -->
+  <button
+    type="button"
+    class="sidebar__collapse"
+    (click)="layout.alternarColapsado()"
+    [attr.aria-label]="layout.sidebarColapsado() ? 'Expandir menú' : 'Contraer menú'"
+    [attr.aria-expanded]="!layout.sidebarColapsado()"
+  >
+    <app-icon [name]="layout.sidebarColapsado() ? 'expandir' : 'colapsar'" [size]="16" />
+  </button>
+
+  <!-- Navegación -->
+  <nav class="sidebar__nav" aria-label="Secciones">
+    <div class="sidebar__group">
+      @if (!layout.sidebarColapsado()) {
+        <p class="sidebar__group-label">Principal</p>
+      } @else {
+        <div class="sidebar__group-sep" aria-hidden="true"></div>
+      }
+      <a
+        class="sidebar__item"
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="cerrarSiMovil()"
+        aria-current="page"
+      >
+        <app-icon-tile name="inicio" [size]="36" color="accent" />
+        @if (!layout.sidebarColapsado()) { <span class="sidebar__label">Inicio</span> }
+      </a>
+    </div>
+
+    <div class="sidebar__group">
+      @if (!layout.sidebarColapsado()) {
+        <p class="sidebar__group-label">Módulos</p>
+      } @else {
+        <div class="sidebar__group-sep" aria-hidden="true"></div>
+      }
+      <a class="sidebar__item" routerLink="/aprender" routerLinkActive="active" (click)="cerrarSiMovil()">
+        <app-icon-tile name="aprender" [size]="36" color="info" />
+        @if (!layout.sidebarColapsado()) { <span class="sidebar__label">Aprender</span> }
+      </a>
+      <a class="sidebar__item" routerLink="/practicar" routerLinkActive="active" (click)="cerrarSiMovil()">
+        <app-icon-tile name="practicar" [size]="36" color="violet" />
+        @if (!layout.sidebarColapsado()) { <span class="sidebar__label">Practicar</span> }
+      </a>
+      <a class="sidebar__item" routerLink="/reportar" routerLinkActive="active" (click)="cerrarSiMovil()">
+        <app-icon-tile name="reportar" [size]="36" color="warn" />
+        @if (!layout.sidebarColapsado()) { <span class="sidebar__label">Reportar</span> }
+        @if (!auth.perfilCompleto()) {
+          <span class="sidebar__lock" [title]="'Inicia sesión para usar este módulo'">
+            <app-icon name="candado" [size]="18" />
+          </span>
+        }
+      </a>
+    </div>
+
+    <div class="sidebar__group">
+      @if (!layout.sidebarColapsado()) {
+        <p class="sidebar__group-label">Herramientas</p>
+      } @else {
+        <div class="sidebar__group-sep" aria-hidden="true"></div>
+      }
+      <a class="sidebar__item" routerLink="/verificar-enlace" routerLinkActive="active" (click)="cerrarSiMovil()">
+        <app-icon-tile name="verificar-enlace" [size]="36" color="success" />
+        @if (!layout.sidebarColapsado()) { <span class="sidebar__label">Verificar enlace</span> }
+      </a>
+      <a class="sidebar__item" routerLink="/alertas" routerLinkActive="active" (click)="cerrarSiMovil()">
+        <app-icon-tile name="alertas" [size]="36" color="danger" />
+        @if (!layout.sidebarColapsado()) { <span class="sidebar__label">Alertas públicas</span> }
+      </a>
+    </div>
+
+    @if (auth.rol() === 'moderador' || auth.rol() === 'admin') {
+      <div class="sidebar__group">
+        @if (!layout.sidebarColapsado()) {
+          <p class="sidebar__group-label">Administración</p>
+        } @else {
+          <div class="sidebar__group-sep" aria-hidden="true"></div>
+        }
+        <a class="sidebar__item" routerLink="/moderacion" routerLinkActive="active" (click)="cerrarSiMovil()">
+          <app-icon-tile name="moderacion" [size]="36" color="muted" />
+          @if (!layout.sidebarColapsado()) { <span class="sidebar__label">Moderar reportes</span> }
+        </a>
+        @if (auth.rol() === 'admin') {
+          <a class="sidebar__item" routerLink="/admin/temas" routerLinkActive="active" (click)="cerrarSiMovil()">
+            <app-icon-tile name="admin" [size]="36" color="muted" />
+            @if (!layout.sidebarColapsado()) { <span class="sidebar__label">Gestionar contenido</span> }
+          </a>
+        }
+      </div>
+    }
+  </nav>
+
+  <!-- Pie -->
+  <div class="sidebar__footer">
+    @if (auth.autenticado() && auth.perfil()) {
+      <div class="sidebar__user">
+        <div class="sidebar__avatar">{{ auth.perfil()!.nombres.charAt(0).toUpperCase() }}</div>
+        @if (!layout.sidebarColapsado()) {
+          <div class="sidebar__user-info">
+            <span class="sidebar__user-name">{{ auth.perfil()!.nombres }} {{ auth.perfil()!.apellido_paterno }}</span>
+            <span class="sidebar__user-role">{{ auth.perfil()!.rol }}</span>
+          </div>
+          <button type="button" class="sidebar__logout" (click)="logout()" aria-label="Cerrar sesión">
+            <app-icon name="cerrar-sesion" [size]="20" />
+          </button>
+        }
+      </div>
+    } @else {
+      <div class="sidebar__cta">
+        @if (!layout.sidebarColapsado()) {
+          <p class="sidebar__cta-text">Guarda tu progreso y reporta estafas</p>
+        }
+        <a
+          class="sidebar__cta-button"
+          routerLink="/auth/registro"
+          (click)="cerrarSiMovil()"
+          [attr.aria-label]="'Crear cuenta'"
+        >
+          @if (layout.sidebarColapsado()) {
+            <app-icon name="crear-cuenta" [size]="20" />
+          } @else {
+            Crear cuenta
+          }
+        </a>
+      </div>
+    }
+  </div>
+</aside>
+
+@if (layout.sidebarMovilAbierto()) {
+  <div class="sidebar__backdrop" (click)="layout.cerrarMovil()" aria-hidden="true"></div>
+}

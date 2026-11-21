@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="320" viewBox="0 0 480 320">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#131C18"/><stop offset="100%" stop-color="#0B110E"/></linearGradient></defs>
+  <rect width="480" height="320" fill="url(#g)"/>
+  <rect x="24" y="24" width="432" height="272" rx="20" fill="none" stroke="#23312A" stroke-width="2"/>
+  <text x="240" y="165" fill="#8A9D93" font-family="Inter, sans-serif" font-size="16" text-anchor="middle">Imagen misión</text>
+</svg>

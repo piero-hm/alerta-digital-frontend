@@ -1,0 +1,67 @@
+<div class="container-xxl px-0">
+  <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+    <div>
+      <h1 class="h2 mb-2">Mis reportes</h1>
+      <p class="fs-5 text-secondary mb-0">
+        Aquí puedes revisar el estado de los reportes que enviaste.
+      </p>
+    </div>
+    <a class="btn btn-primary btn-lg align-self-start" routerLink="/reportar">
+      Reportar otra estafa
+    </a>
+  </div>
+
+  <app-estado-pantalla
+    [cargando]="cargando()"
+    [error]="error()"
+    [vacio]="!cargando() && !error() && reportes().length === 0"
+    mensajeVacio="Todavía no has enviado ningún reporte."
+    (reintentar)="cargar()"
+  >
+    <a class="btn btn-primary" routerLink="/reportar">Enviar mi primer reporte</a>
+  </app-estado-pantalla>
+
+  @if (!cargando() && !error() && reportes().length > 0) {
+    <div class="d-flex flex-column gap-3">
+      @for (reporte of reportes(); track reporte.id) {
+        <article class="card">
+          <div class="card-body">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+              <div class="d-flex flex-wrap gap-2">
+                <span class="badge bg-primary text-capitalize">{{ reporte.tipo_fraude }}</span>
+                <span class="badge bg-secondary text-capitalize">{{ reporte.canal }}</span>
+                <span class="badge bg-light text-dark border">{{ reporte.departamento }}</span>
+              </div>
+              <span [class]="claseEstado(reporte.estado)">{{ etiquetaEstado(reporte.estado) }}</span>
+            </div>
+
+            <p class="mb-2">{{ reporte.descripcion }}</p>
+
+            <div class="row g-2 text-secondary small">
+              <div class="col-12 col-md-4">
+                <span class="fw-semibold">Fecha del incidente:</span>
+                {{ formatoFecha(reporte.fecha_incidente) }}
+              </div>
+              <div class="col-12 col-md-4">
+                <span class="fw-semibold">Monto afectado:</span>
+                {{ moneda(reporte.monto_afectado) }}
+              </div>
+              <div class="col-12 col-md-4">
+                <span class="fw-semibold">Enviado:</span>
+                {{ formatoFecha(reporte.creado_en) }}
+              </div>
+            </div>
+
+            @if (enlaceSeguro(reporte.evidencia_url) && reporte.evidencia_url; as evidencia) {
+              <p class="mt-2 mb-0">
+                <a [href]="evidencia" target="_blank" rel="noopener noreferrer">
+                  Ver evidencia
+                </a>
+              </p>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  }
+</div>

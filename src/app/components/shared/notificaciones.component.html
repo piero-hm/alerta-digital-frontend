@@ -1,0 +1,16 @@
+@for (item of notificacion.notificaciones(); track item.id) {
+  <div class="alerta-toast" role="alert" aria-live="polite">
+    <div [class]="claseToast(item.tipo)" style="animation: adFadeUp 200ms ease both; border-radius: var(--ad-r-md);">
+      <div class="d-flex align-items-start gap-2">
+        <span aria-hidden="true">{{ iconoTipo(item.tipo) }}</span>
+        <span class="fw-semibold flex-grow-1">{{ item.mensaje }}</span>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Cerrar notificación"
+          (click)="notificacion.cerrar(item.id)"
+        ></button>
+      </div>
+    </div>
+  </div>
+}

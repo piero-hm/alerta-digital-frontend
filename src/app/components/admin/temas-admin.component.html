@@ -1,0 +1,169 @@
+<div class="container-xxl px-0">
+  <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+    <div>
+      <h1 class="h2 mb-2">Administrar contenido</h1>
+      <p class="fs-5 text-secondary mb-0">
+        Crea temas, publica contenido y agrega bloques, preguntas y opciones.
+      </p>
+    </div>
+    <button type="button" class="btn btn-primary btn-lg align-self-start" (click)="creando.set(!creando())">
+      @if (creando()) {
+        Ocultar formulario
+      } @else {
+        Nuevo tema
+      }
+    </button>
+  </div>
+
+  @if (creando()) {
+    <section class="card mb-4">
+      <div class="card-header">Crear un tema</div>
+      <div class="card-body">
+        <form [formRoot]="form">
+          @if (form().errors().length > 0) {
+            <div class="alert alert-danger" role="alert">
+              {{ form().errors()[0].message }}
+            </div>
+          }
+
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label class="form-label" for="temaSlug">Identificador (slug)</label>
+              <input
+                id="temaSlug"
+                type="text"
+                class="form-control"
+                placeholder="phishing-que-es"
+                [formField]="form.slug"
+                [class.is-invalid]="form.slug().touched() && form.slug().invalid()"
+              />
+              <div class="form-text">Minúsculas, números y guiones.</div>
+              @if (form.slug().touched() && form.slug().invalid()) {
+                <div class="invalid-feedback d-block" role="alert">
+                  {{ form.slug().errors()[0].message }}
+                </div>
+              }
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label class="form-label" for="temaTitulo">Título</label>
+              <input
+                id="temaTitulo"
+                type="text"
+                class="form-control"
+                [formField]="form.titulo"
+                [class.is-invalid]="form.titulo().touched() && form.titulo().invalid()"
+              />
+              @if (form.titulo().touched() && form.titulo().invalid()) {
+                <div class="invalid-feedback d-block" role="alert">
+                  {{ form.titulo().errors()[0].message }}
+                </div>
+              }
+            </div>
+
+            <div class="col-12 col-md-8">
+              <label class="form-label" for="temaResumen">Resumen</label>
+              <textarea
+                id="temaResumen"
+                class="form-control"
+                rows="2"
+                [formField]="form.resumen"
+                [class.is-invalid]="form.resumen().touched() && form.resumen().invalid()"
+              ></textarea>
+              @if (form.resumen().touched() && form.resumen().invalid()) {
+                <div class="invalid-feedback d-block" role="alert">
+                  {{ form.resumen().errors()[0].message }}
+                </div>
+              }
+            </div>
+
+            <div class="col-12 col-md-4">
+              <label class="form-label" for="temaPublico">Público objetivo</label>
+              <select id="temaPublico" class="form-select" [formField]="form.publico_objetivo">
+                <option value="todos">Todos</option>
+                <option value="adulto_mayor">Adultos mayores</option>
+                <option value="joven">Jóvenes</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <button type="submit" class="btn btn-primary" [disabled]="form().submitting()">
+              @if (form().submitting()) {
+                Creando...
+              } @else {
+                Crear tema
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+  }
+
+  <app-estado-pantalla
+    [cargando]="cargando()"
+    [error]="error()"
+    [vacio]="!cargando() && !error() && temas().length === 0"
+    mensajeVacio="Todavía no hay temas creados."
+    (reintentar)="cargar()"
+  >
+    <button type="button" class="btn btn-primary" (click)="creando.set(true)">Crear el primer tema</button>
+  </app-estado-pantalla>
+
+  @if (!cargando() && !error() && temas().length > 0) {
+    <div class="table-responsive card">
+      <table class="table table-hover align-middle mb-0 tabla-ad">
+        <thead>
+          <tr>
+            <th scope="col">Tema</th>
+            <th scope="col">Público</th>
+            <th scope="col">Estado</th>
+            <th scope="col" class="text-end">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tema of temas(); track tema.id) {
+            <tr>
+              <td>
+                <p class="fw-semibold mb-0">{{ tema.titulo }}</p>
+                <p class="text-secondary small mb-0">{{ tema.slug }}</p>
+              </td>
+              <td>{{ etiquetaPublico(tema.publico_objetivo) }}</td>
+              <td>
+                @if (tema.publicado) {
+                  <span class="badge bg-success">Publicado</span>
+                } @else {
+                  <span class="badge bg-secondary">No publicado</span>
+                }
+              </td>
+              <td class="text-end">
+                <div class="d-flex flex-wrap justify-content-end gap-2">
+                  <a class="btn btn-sm btn-outline-primary" [routerLink]="['/admin/temas', tema.id]">
+                    Editar
+                  </a>
+                  <button
+                    type="button"
+                    class="btn btn-sm"
+                    [class.btn-outline-success]="!tema.publicado"
+                    [class.btn-outline-secondary]="tema.publicado"
+                    [disabled]="cambiandoId() === tema.id"
+                    (click)="cambiarPublicacion(tema)"
+                  >
+                    @if (cambiandoId() === tema.id) {
+                      Guardando...
+                    } @else if (tema.publicado) {
+                      Despublicar
+                    } @else {
+                      Publicar
+                    }
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

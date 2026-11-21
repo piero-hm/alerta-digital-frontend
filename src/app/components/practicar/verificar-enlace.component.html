@@ -1,0 +1,64 @@
+<div class="container-xxl px-0">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-7">
+      <h1 class="h2 mb-2">Verificar un enlace</h1>
+      <p class="fs-5 text-secondary mb-4">
+        Pega un enlace que recibiste por mensaje, correo o redes sociales. Te diremos si
+        parece seguro, sospechoso o peligroso.
+      </p>
+
+      <section class="card mb-4">
+        <div class="card-body p-4">
+          <form [formRoot]="form">
+            <div class="mb-3">
+              <label class="form-label" for="urlEnlace">Dirección del enlace</label>
+              <input
+                id="urlEnlace"
+                type="url"
+                class="form-control form-control-lg"
+                placeholder="https://ejemplo.com"
+                autocomplete="off"
+                [formField]="form.url"
+                [class.is-invalid]="form.url().touched() && form.url().invalid()"
+                [attr.aria-describedby]="
+                  form.url().touched() && form.url().invalid() ? 'errorUrl' : 'ayudaUrl'
+                "
+              />
+              <div id="ayudaUrl" class="form-text">
+                Solo se aceptan enlaces que comiencen con http:// o https://.
+              </div>
+              @if (form.url().touched() && form.url().invalid()) {
+                <div id="errorUrl" class="invalid-feedback d-block" role="alert">
+                  {{ form.url().errors()[0].message }}
+                </div>
+              }
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" [disabled]="form().submitting()">
+              @if (form().submitting()) {
+                Verificando...
+              } @else {
+                Verificar enlace
+              }
+            </button>
+          </form>
+        </div>
+      </section>
+
+      @if (resultadoInfo(); as info) {
+        <div class="alert fs-5" [class]="info.clase" role="status">
+          <h2 class="h4">{{ info.titulo }}</h2>
+          <p class="mb-0">{{ info.detalle }}</p>
+        </div>
+      }
+
+      <div class="alert alert-light border">
+        <p class="fw-semibold mb-1">Recuerda</p>
+        <p class="mb-0">
+          Ningún verificador reemplaza tu criterio. Si un mensaje te apura, te pide
+          contraseñas o datos de tarjeta, desconfía.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

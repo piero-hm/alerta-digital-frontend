@@ -1,0 +1,205 @@
+<div class="container-xxl px-0">
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-9">
+      <h1 class="h2 mb-2">Reportar una estafa</h1>
+      <p class="fs-5 text-secondary mb-4">
+        Cuéntanos qué pasó. La información personal de tu cuenta no se mostrará en las
+        alertas públicas.
+      </p>
+
+      @if (!puedeReportar()) {
+        <div class="alert alert-warning" role="alert">
+          Solo las cuentas con rol <strong>ciudadano</strong> pueden registrar reportes.
+          Tu cuenta tiene otro rol.
+          <a class="alert-link" routerLink="/">Volver al inicio</a>.
+        </div>
+      }
+
+      @if (cargandoCatalogos()) {
+        <div class="alert alert-light border" role="status">
+          Cargando opciones del formulario...
+        </div>
+      } @else if (errorCatalogos()) {
+        <div class="alert alert-danger" role="alert">
+          {{ errorCatalogos() }}
+          <button type="button" class="btn btn-sm btn-outline-primary ms-2" (click)="cargarCatalogos()">
+            Reintentar
+          </button>
+        </div>
+      }
+
+      @if (catalogos(); as opciones) {
+        <section class="card">
+          <div class="card-body p-4">
+            <form [formRoot]="form">
+              @if (form().errors().length > 0) {
+                <div class="alert alert-danger" role="alert">
+                  {{ form().errors()[0].message }}
+                </div>
+              }
+
+              <div class="row g-3">
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="tipoFraude">Tipo de fraude</label>
+                  <select
+                    id="tipoFraude"
+                    class="form-select"
+                    [formField]="form.tipo_fraude_id"
+                    [class.is-invalid]="form.tipo_fraude_id().touched() && form.tipo_fraude_id().invalid()"
+                  >
+                    <option value="">Selecciona una opción</option>
+                    @for (tipo of opciones.tipos_fraude; track tipo.id) {
+                      <option [value]="tipo.id.toString()">{{ tipo.nombre }}</option>
+                    }
+                  </select>
+                  @if (form.tipo_fraude_id().touched() && form.tipo_fraude_id().invalid()) {
+                    <div class="invalid-feedback d-block" role="alert">
+                      {{ form.tipo_fraude_id().errors()[0].message }}
+                    </div>
+                  }
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="canal">Canal</label>
+                  <select
+                    id="canal"
+                    class="form-select"
+                    [formField]="form.canal_id"
+                    [class.is-invalid]="form.canal_id().touched() && form.canal_id().invalid()"
+                  >
+                    <option value="">Selecciona una opción</option>
+                    @for (canal of opciones.canales; track canal.id) {
+                      <option [value]="canal.id.toString()">{{ canal.nombre }}</option>
+                    }
+                  </select>
+                  @if (form.canal_id().touched() && form.canal_id().invalid()) {
+                    <div class="invalid-feedback d-block" role="alert">
+                      {{ form.canal_id().errors()[0].message }}
+                    </div>
+                  }
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="departamento">Departamento</label>
+                  <select
+                    id="departamento"
+                    class="form-select"
+                    [formField]="form.departamento_id"
+                    [class.is-invalid]="form.departamento_id().touched() && form.departamento_id().invalid()"
+                  >
+                    <option value="">Selecciona una opción</option>
+                    @for (departamento of opciones.departamentos; track departamento.id) {
+                      <option [value]="departamento.id.toString()">{{ departamento.nombre }}</option>
+                    }
+                  </select>
+                  @if (form.departamento_id().touched() && form.departamento_id().invalid()) {
+                    <div class="invalid-feedback d-block" role="alert">
+                      {{ form.departamento_id().errors()[0].message }}
+                    </div>
+                  }
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="fechaIncidente">Fecha del incidente</label>
+                  <input
+                    id="fechaIncidente"
+                    type="date"
+                    class="form-control"
+                    [formField]="form.fecha_incidente"
+                    [class.is-invalid]="form.fecha_incidente().touched() && form.fecha_incidente().invalid()"
+                  />
+                  @if (form.fecha_incidente().touched() && form.fecha_incidente().invalid()) {
+                    <div class="invalid-feedback d-block" role="alert">
+                      {{ form.fecha_incidente().errors()[0].message }}
+                    </div>
+                  }
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label" for="descripcion">¿Qué pasó?</label>
+                  <textarea
+                    id="descripcion"
+                    class="form-control"
+                    rows="5"
+                    placeholder="Describe el mensaje o la situación. No escribas contraseñas ni datos de tarjeta."
+                    [formField]="form.descripcion"
+                    [class.is-invalid]="form.descripcion().touched() && form.descripcion().invalid()"
+                  ></textarea>
+                  <div class="form-text">Entre 20 y 3000 caracteres.</div>
+                  @if (form.descripcion().touched() && form.descripcion().invalid()) {
+                    <div class="invalid-feedback d-block" role="alert">
+                      {{ form.descripcion().errors()[0].message }}
+                    </div>
+                  }
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="montoAfectado">
+                    Monto afectado (opcional)
+                  </label>
+                  <input
+                    id="montoAfectado"
+                    type="number"
+                    class="form-control"
+                    step="0.01"
+                    [formField]="form.monto_afectado"
+                    [class.is-invalid]="form.monto_afectado().touched() && form.monto_afectado().invalid()"
+                  />
+                  @if (form.monto_afectado().touched() && form.monto_afectado().invalid()) {
+                    <div class="invalid-feedback d-block" role="alert">
+                      {{ form.monto_afectado().errors()[0].message }}
+                    </div>
+                  }
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="evidenciaUrl">
+                    Enlace de evidencia (opcional)
+                  </label>
+                  <input
+                    id="evidenciaUrl"
+                    type="url"
+                    class="form-control"
+                    placeholder="https://ejemplo.com/captura.png"
+                    [formField]="form.evidencia_url"
+                    [class.is-invalid]="form.evidencia_url().touched() && form.evidencia_url().invalid()"
+                  />
+                  @if (form.evidencia_url().touched() && form.evidencia_url().invalid()) {
+                    <div class="invalid-feedback d-block" role="alert">
+                      {{ form.evidencia_url().errors()[0].message }}
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="alert alert-light border mt-4">
+                <p class="fw-semibold mb-1">Antes de enviar</p>
+                <p class="mb-0">
+                  Revisa que la descripción explique el engaño sin incluir contraseñas,
+                  números de tarjeta ni datos de otras personas.
+                </p>
+              </div>
+
+              <div class="d-flex flex-wrap gap-2">
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-lg"
+                  [disabled]="form().submitting() || !puedeReportar()"
+                >
+                  @if (form().submitting()) {
+                    Enviando...
+                  } @else {
+                    Enviar reporte
+                  }
+                </button>
+                <a class="btn btn-outline-secondary btn-lg" routerLink="/mis-reportes">
+                  Mis reportes
+                </a>
+              </div>
+            </form>
+          </div>
+        </section>
+      }
+    </div>
+  </div>
+</div>

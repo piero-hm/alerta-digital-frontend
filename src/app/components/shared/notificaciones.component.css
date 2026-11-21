@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+/* Notificación toast */
+.alerta-toast {
+  position: fixed;
+  top: calc(var(--ad-topbar-h, 64px) + 16px);
+  right: 1rem;
+  z-index: 1080;
+  max-width: 24rem;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

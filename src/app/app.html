@@ -1,0 +1,17 @@
+<div class="app-shell" [class.app-shell--collapsed]="layout.sidebarColapsado()">
+  <app-sidebar />
+
+  <div class="app-content">
+    <app-navbar />
+
+    <main id="contenido-principal" class="app-main">
+      <div class="app-main__inner">
+        <router-outlet />
+      </div>
+    </main>
+
+    <app-footer />
+  </div>
+</div>
+
+<app-notificaciones />

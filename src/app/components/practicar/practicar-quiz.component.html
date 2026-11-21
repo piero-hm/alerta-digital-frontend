@@ -1,0 +1,153 @@
+<div class="quiz-page">
+  <div class="quiz-top">
+    <a class="btn-ghost" routerLink="/practicar">
+      <app-icon name="flecha-izq" [size]="20" />
+      Volver a practicar
+    </a>
+    <a class="btn-secondary-sm" [routerLink]="['/aprender', slug()]">Leer el tema</a>
+  </div>
+
+  <app-estado-pantalla
+    [cargando]="cargando()"
+    [error]="error()"
+    [vacio]="!cargando() && !error() && preguntas().length === 0"
+    mensajeVacio="Este tema todavía no tiene preguntas activas."
+    (reintentar)="cargar()"
+  >
+    <a class="btn btn-outline-primary" routerLink="/practicar">Ver otros temas</a>
+  </app-estado-pantalla>
+
+  @if (!cargando() && !error() && preguntas().length > 0) {
+    @if (finalizado()) {
+      <section class="result-card">
+        <div class="result-ring">
+          <svg viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="70" class="result-ring__track" />
+            <circle cx="80" cy="80" r="70" class="result-ring__fill" [attr.stroke-dasharray]="(porcentajeFinal() * 4.398) + ' 439.8'" />
+          </svg>
+          <div class="result-ring__center">
+            <span class="result-ring__num">{{ porcentajeFinal() }}%</span>
+          </div>
+        </div>
+        <h1 class="result-title">Terminaste la práctica</h1>
+        <p class="result-text">Respondiste correctamente {{ correctas() }} de {{ total() }} preguntas.</p>
+
+        @if (porcentajeFinal() === 100) {
+          <div class="alert alert-success">¡Excelente! Dominas este tema.</div>
+        } @else if (porcentajeFinal() >= 60) {
+          <div class="alert alert-info">Vas bien. Repasa el tema y vuelve a intentarlo para mejorar.</div>
+        } @else {
+          <div class="alert alert-warning">Te recomendamos leer el tema con calma y practicar nuevamente.</div>
+        }
+
+        <div class="result-actions">
+          <button type="button" class="btn btn-primary btn-lg" (click)="reiniciar()">Practicar otra vez</button>
+          <a class="btn btn-secondary btn-lg" routerLink="/practicar">Elegir otro tema</a>
+          <a class="btn btn-secondary btn-lg" routerLink="/aprender">Volver a Aprender</a>
+        </div>
+      </section>
+    } @else if (preguntaActual(); as pregunta) {
+      <!-- Progreso -->
+      <div class="quiz-progress">
+        <div class="quiz-progress__head">
+          <span class="quiz-progress__label">Pregunta {{ indice() + 1 }} de {{ total() }}</span>
+          <span class="quiz-progress__pct">{{ porcentajeAvance() }}% completado</span>
+        </div>
+        <div class="quiz-progress__segments">
+          @for (i of segmentos(); track i) {
+            <span
+              class="quiz-seg"
+              [class.is-current]="i === indice() && !respuesta()"
+              [class.is-done]="i < indice() || (i === indice() && !!respuesta())"
+              [class.is-correct]="i < indice() && respuestasCorrectas()[i]"
+              [class.is-wrong]="i < indice() && !respuestasCorrectas()[i]"
+            ></span>
+          }
+        </div>
+      </div>
+
+      <section class="question-card">
+        <span class="chip chip--info">Pregunta {{ indice() + 1 }}</span>
+        <h1 class="question-title">{{ pregunta.enunciado }}</h1>
+
+        @if (pregunta.mensaje_simulado) {
+          <div class="simulated-msg">
+            <div class="simulated-msg__head">
+              <app-icon-tile name="sms" [size]="44" color="warn" />
+              <span class="simulated-msg__label">MENSAJE SIMULADO</span>
+            </div>
+            <div class="simulated-msg__bubble">
+              <p>{{ pregunta.mensaje_simulado }}</p>
+            </div>
+          </div>
+        }
+
+        @if (!auth.autenticado()) {
+          <div class="guest-banner">
+            <app-icon-tile name="info" [size]="36" color="info" />
+            <div class="guest-banner__text">
+              <p>Para responder necesitas iniciar sesión.</p>
+            </div>
+            <div class="guest-banner__actions">
+              <a class="btn btn-secondary btn-sm" routerLink="/auth/login">Iniciar sesión</a>
+              <a class="btn btn-primary btn-sm" routerLink="/auth/registro">Crear cuenta</a>
+            </div>
+          </div>
+        } @else if (!auth.perfilCompleto()) {
+          <div class="alert alert-warning">
+            Antes de responder debes completar tu perfil.
+            <a class="alert-link" routerLink="/auth/completar-perfil">Completar perfil</a>.
+          </div>
+        }
+
+        <div class="options" role="radiogroup" aria-label="Opciones de respuesta">
+          @for (opcion of pregunta.opciones; track opcion.id; let i = $index) {
+            <button
+              type="button"
+              class="option-card"
+              [class.is-selected]="seleccion() === opcion.id && !respuesta()"
+              [class.is-correct]="respuesta() && seleccion() === opcion.id && respuesta()!.es_correcta"
+              [class.is-wrong]="respuesta() && seleccion() === opcion.id && !respuesta()!.es_correcta"
+              [class.is-dimmed]="respuesta() && seleccion() !== opcion.id"
+              [disabled]="respuesta() !== null || enviando() || !auth.perfilCompleto()"
+              (click)="seleccionar(opcion.id)"
+            >
+              <span class="option-card__letter">{{ letras[i] }}</span>
+              <span class="option-card__text">{{ opcion.texto }}</span>
+              @if (respuesta() && seleccion() === opcion.id) {
+                <span class="option-card__status">
+                  {{ respuesta()!.es_correcta ? 'Correcta' : 'Incorrecta' }}
+                </span>
+              }
+            </button>
+          }
+        </div>
+
+        @if (respuesta(); as resultado) {
+          <div class="explanation" [class.explanation--ok]="resultado.es_correcta" [class.explanation--bad]="!resultado.es_correcta">
+            <app-icon-tile [name]="resultado.es_correcta ? 'exito' : 'error'" [size]="44" [color]="resultado.es_correcta ? 'success' : 'danger'" />
+            <div>
+              <h3>{{ resultado.es_correcta ? '¡Correcto!' : 'Casi, revisa esto' }}</h3>
+              <p>{{ resultado.explicacion }}</p>
+            </div>
+          </div>
+        }
+
+        <div class="quiz-actions">
+          @if (!respuesta()) {
+            <app-button type="button" variant="primary" [fullWidth]="true" [loading]="enviando()" [disabled]="seleccion() === null || enviando() || !auth.perfilCompleto()" (click)="responder()">
+              @if (enviando()) { Enviando... } @else { Responder }
+            </app-button>
+            @if (seleccion() === null && auth.perfilCompleto()) {
+              <p class="help-text">Elige una respuesta para continuar.</p>
+            }
+          } @else {
+            <app-button type="button" variant="primary" [fullWidth]="true" (click)="siguiente()">
+              @if (indice() + 1 >= total()) { Ver resultado } @else { Siguiente pregunta }
+            </app-button>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>
