@@ -1,0 +1,52 @@
+name: Deploy Frontend to Render
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-render-frontend
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    name: Build, test and deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Run tests
+        run: npm run test:ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Trigger Render deploy
+        env:
+          DEPLOY_HOOK: ${{ secrets.HOOK_RENDER_FRONTEND }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "::error::El secret HOOK_RENDER_FRONTEND no está configurado."
+            exit 1
+          fi
+          curl -fsS --retry 3 -X POST "$DEPLOY_HOOK"
