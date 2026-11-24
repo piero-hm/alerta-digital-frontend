@@ -48,7 +48,23 @@
       @if (resultadoInfo(); as info) {
         <div class="alert fs-5" [class]="info.clase" role="status">
           <h2 class="h4">{{ info.titulo }}</h2>
-          <p class="mb-0">{{ info.detalle }}</p>
+          <p class="mb-2">{{ info.detalle }}</p>
+
+          @if (urlVerificada()) {
+            <p class="mb-2">
+              <strong>Enlace revisado:</strong>
+              <span class="text-break">{{ urlVerificada() }}</span>
+            </p>
+          }
+
+          @if (motivos().length > 0) {
+            <p class="fw-semibold mb-1">Motivos detectados</p>
+            <ul class="mb-0">
+              @for (motivo of motivos(); track motivo) {
+                <li>{{ motivo }}</li>
+              }
+            </ul>
+          }
         </div>
       }
 
